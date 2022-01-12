@@ -12,7 +12,7 @@ Go to the project directory
 
     mkdir build
     cd build
-    cmake -DCMAKE_BUIDL_TYPE=Release ..
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
 
 ## Usage
