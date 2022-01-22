@@ -30,6 +30,14 @@ namespace game {
 
     explicit Game(const std::string &fen_notation);
 
+    enum class GameState {
+      kOngoing, kWhiteWon, kBlackWon, kDraw,
+    };
+
+    GameState CheckGameState() const;
+
+    bool IsEnded() const;
+
   private:
     unsigned half_move_clock;
     std::set<uint64_t> unique_pos;
