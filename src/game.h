@@ -38,7 +38,7 @@ namespace game {
 
     [[nodiscard]] color::Color GetTurnToMove() const;
 
-    const Board &GetCurrentBoard() const;
+    [[nodiscard]] const Board &GetCurrentBoard() const;
 
     void Print(color::Color perspective) const;
 

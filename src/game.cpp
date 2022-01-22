@@ -47,6 +47,7 @@ namespace game {
           std::cout << "You LOST!\n";
         }
       }
+      return true;
     } else {
       return false;
     }

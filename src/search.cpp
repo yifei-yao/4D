@@ -137,7 +137,11 @@ namespace search {
             board, ply, prev_pv);
 
     if (children.empty()) { // checkmate
-      return infinity::kNegativeInfinity;
+      if (move_gen::IsInCheck(board, move_gen::FindKingPos(board))) {
+        return infinity::kNegativeInfinity; // checkmate
+      } else {
+        return 0; // stalemate
+      }
     }
 
     if (depth == 0) {
