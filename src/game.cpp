@@ -20,7 +20,8 @@ namespace game {
           Move move = AskPlayerMove(game.GetCurrentBoard());
           game.ApplyMove(move);
         } else {
-          Move move = search::IDRoot(game.GetCurrentBoard(), TimeController(4));
+          Move move = search::IDRoot(game.GetCurrentBoard(), TimeController(4),
+                                     game.GetTwofoldRepeat());
           std::cout << "AI move: " << move << "\n";
           game.ApplyMove(move);
         }
@@ -236,5 +237,9 @@ namespace game {
 
   const Board &Game::GetCurrentBoard() const {
     return current_board;
+  }
+
+  const std::set<uint64_t> &Game::GetTwofoldRepeat() const {
+    return twofold_repeat_pos;
   }
 }

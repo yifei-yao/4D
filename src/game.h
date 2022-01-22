@@ -48,6 +48,8 @@ namespace game {
 
     [[nodiscard]] bool IsEnded() const;
 
+    [[nodiscard]] const std::set<uint64_t> &GetTwofoldRepeat() const;
+
   private:
     unsigned half_move_clock;
     std::set<uint64_t> unique_pos;

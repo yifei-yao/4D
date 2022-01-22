@@ -10,23 +10,24 @@
 
 #include <list>
 #include <chrono>
+#include <map>
 
 namespace search {
-  Move IDRoot(const Board &board, TimeController time_controller) {
+  Move IDRoot(const Board &board, TimeController time_controller,
+              const std::set<uint64_t> &twofold_repeat_pos) {
     Move pre_move;
     Move curr_move;
     std::vector<Move> prev_pv;
     std::vector<Move> curr_pv;
     curr_pv.emplace_back();
     unsigned depth = 1;
+
+
     while (!time_controller.IsTimeUp()) {
       pre_move = curr_move;
       int score;
-      auto begin = std::chrono::steady_clock::now();
-      auto pair = PVSRoot(board, depth, prev_pv, curr_pv, time_controller);
-      auto end = std::chrono::steady_clock::now();
-      auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-              end - begin);
+      auto pair = PVSRoot(board, depth, prev_pv, curr_pv, time_controller,
+                          twofold_repeat_pos);
       curr_move = pair.first;
       score = pair.second;
       if (!time_controller.IsTimeUp()) {
@@ -45,7 +46,8 @@ namespace search {
   std::pair<Move, int> PVSRoot(const Board &board, unsigned int depth,
                                const std::vector<Move> &prev_pv,
                                std::vector<Move> &curr_pv,
-                               TimeController time_controller) {
+                               TimeController time_controller,
+                               const std::set<uint64_t> &twofold_repeat_pos) {
     TT table{};
 
     if (depth < 1) {
@@ -60,9 +62,24 @@ namespace search {
 
     Move best_move = children.front();
 
-    int best_score = -PVS({board, children.front()}, depth - 1,
+    Board best_child = Board(board, best_move);
+
+    int best_score;
+    if (move_gen::IsHasNoValidMove(best_child)) {
+      if (move_gen::IsInCheck(best_child, move_gen::FindKingPos(best_child))) {
+        best_score = infinity::kInfinity;
+      } else {
+        best_score = 0;
+      }
+    } else {
+      if (IsRepetitionDraw(best_child, twofold_repeat_pos)) {
+        best_score = 0;
+      } else {
+        best_score = -PVS({board, children.front()}, depth - 1,
                           -beta, -alpha,
                           table, 1, prev_pv, curr_pv, time_controller);
+      }
+    }
 
     if (best_score > alpha) {
       if (best_score >=
@@ -75,8 +92,23 @@ namespace search {
 
     for (auto child = ++children.begin(); child != children.end(); ++child) {
       Board child_board(board, *child);
-      int score = -PVS(child_board, depth - 1, -alpha - 1, -alpha, table, 1,
+
+      int score;
+      if (move_gen::IsHasNoValidMove(child_board)) {
+        if (move_gen::IsInCheck(child_board,
+                                move_gen::FindKingPos(child_board))) {
+          score = infinity::kInfinity;
+        } else {
+          score = 0;
+        }
+      } else {
+        if (IsRepetitionDraw(child_board, twofold_repeat_pos)) {
+          score = 0;
+        } else {
+          score = -PVS(child_board, depth - 1, -alpha - 1, -alpha, table, 1,
                        prev_pv, curr_pv, time_controller);
+        }
+      }
       if (score > alpha && score < beta) {
         score = -PVS(child_board, depth - 1, -beta, -alpha, table, 1, prev_pv,
                      curr_pv, time_controller);
@@ -136,7 +168,7 @@ namespace search {
     std::list<Move> children = move_order::GenerateMoveOrderedChildrenList(
             board, ply, prev_pv);
 
-    if (children.empty()) { // checkmate
+    if (children.empty()) {
       if (move_gen::IsInCheck(board, move_gen::FindKingPos(board))) {
         return infinity::kNegativeInfinity; // checkmate
       } else {
@@ -232,5 +264,11 @@ namespace search {
       }
     }
     return alpha;
+  }
+
+  bool IsRepetitionDraw(const Board &board,
+                        const std::set<uint64_t> &twofold_repeat_pos) {
+    uint64_t hash_value = zobrist::GetHashKey(board);
+    return twofold_repeat_pos.find(hash_value) != twofold_repeat_pos.end();
   }
 }
