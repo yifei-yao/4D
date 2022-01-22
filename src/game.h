@@ -34,9 +34,11 @@ namespace game {
       kOngoing, kWhiteWon, kBlackWon, kDraw,
     };
 
-    GameState CheckGameState() const;
+    void ApplyMove(Move valid_move);
 
-    bool IsEnded() const;
+    [[nodiscard]] GameState GetGameState() const;
+
+    [[nodiscard]] bool IsEnded() const;
 
   private:
     unsigned half_move_clock;
@@ -44,6 +46,7 @@ namespace game {
     std::set<uint64_t> twofold_repeat_pos;
     color::Color turn_to_move;
     Board current_board;
+    GameState state;
   };
 }
 #endif //INC_4D_GAME_H

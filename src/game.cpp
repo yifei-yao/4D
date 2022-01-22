@@ -30,7 +30,7 @@ namespace game {
   }
 
   bool IsGameEnded(const Board &board, color::Color player_color) {
-    if (!move_gen::IsCheckMated(board)) {
+    if (!move_gen::IsHasNoValidMove(board)) {
       return false;
     } else {
       std::cout << "Game Over\n";
@@ -107,7 +107,7 @@ namespace game {
 
   Game::Game()
           : current_board(), half_move_clock(0),
-            turn_to_move(color::Color::kWhite) {
+            turn_to_move(color::Color::kWhite), state(GameState::kOngoing) {
     unique_pos.insert(zobrist::GetHashKey(current_board));
   }
 
@@ -118,12 +118,13 @@ namespace game {
     unsigned half_move;
     ss << fen_notation;
     if (!(ss >> head >> color_char >> castling >> en_passant >> half_move) ||
-        half_move > 50) {
+        half_move > 100) {
       std::cerr << "Invalid FEN notation format!\n";
       current_board = Board();
       half_move_clock = 0;
       turn_to_move = color::Color::kWhite;
       unique_pos.insert(zobrist::GetHashKey(current_board));
+      state = GameState::kOngoing;
       return;
     }
     std::stringstream main_fen;
@@ -134,5 +135,84 @@ namespace game {
     // FEN notation cannot check threefold repetition
     half_move_clock = half_move;
     turn_to_move = color::FenToColor(color_char);
+    state = GameState::kOngoing;
+  }
+
+  bool Game::IsEnded() const {
+    return GetGameState() != GameState::kOngoing;
+  }
+
+  Game::GameState Game::GetGameState() const {
+    return state;
+  }
+
+  void Game::ApplyMove(Move valid_move) {
+    // assume valid move; for user input, must be validated beforehand
+
+    if (IsEnded()) {
+      throw std::logic_error("Cannot make move after game termination");
+    }
+
+    std::vector<Move> all_moves = move_gen::GenerateAllMoves(current_board);
+    if (std::find(all_moves.begin(), all_moves.end(), valid_move) ==
+        all_moves.end()) {
+      throw std::range_error("Attempt to apply illegal move");
+    }
+
+    bool is_capture_or_pawn_push = false;
+    if (current_board.GetPieceTypeAt(valid_move.to) != Piece::Type::kNone) {
+      is_capture_or_pawn_push = true;
+    } else if (current_board.GetPieceTypeAt(valid_move.from) ==
+               Piece::Type::kPawn) {
+      is_capture_or_pawn_push = true;
+    }
+    if (is_capture_or_pawn_push) {
+      half_move_clock = 0;
+    } else {
+      ++half_move_clock;
+    }
+
+    current_board = Board(current_board, valid_move);
+
+    turn_to_move = !turn_to_move;
+
+    if (move_gen::IsHasNoValidMove(current_board)) {
+      if (move_gen::IsInCheck(current_board,
+                              move_gen::FindKingPos(current_board))) {
+        switch (turn_to_move) {
+          case color::Color::kWhite:
+            state = GameState::kBlackWon;
+            return;
+          case color::Color::kBlack:
+            state = GameState::kWhiteWon;
+            return;
+          case color::Color::kNone:
+            throw std::logic_error(
+                    "No one won but game ended and is not a draw");
+        }
+      } else {
+        state = GameState::kDraw; // stalemate
+        return;
+      }
+    }
+
+    uint64_t hashed_pos = zobrist::GetHashKey(current_board);
+
+    if (twofold_repeat_pos.find(hashed_pos) != twofold_repeat_pos.end()) {
+      state = GameState::kDraw;
+      return;
+    }
+    auto found = unique_pos.find(hashed_pos);
+    if (found != unique_pos.end()) {
+      unique_pos.erase(found);
+      twofold_repeat_pos.insert(hashed_pos);
+    } else {
+      unique_pos.insert(hashed_pos);
+    }
+
+    if (half_move_clock == 100) {
+      state = GameState::kDraw;
+      return;
+    }
   }
 }
