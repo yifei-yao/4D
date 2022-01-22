@@ -5,6 +5,7 @@
 #include "game.h"
 #include "move_gen.h"
 #include <map>
+#include <sstream>
 #include "search.h"
 #include "zobrist.h"
 
@@ -108,5 +109,30 @@ namespace game {
           : current_board(), half_move_clock(0),
             turn_to_move(color::Color::kWhite) {
     unique_pos.insert(zobrist::GetHashKey(current_board));
+  }
+
+  Game::Game(const std::string &fen_notation) {
+    std::stringstream ss;
+    std::string head, castling, en_passant;
+    char color_char;
+    unsigned half_move;
+    ss << fen_notation;
+    if (!(ss >> head >> color_char >> castling >> en_passant >> half_move) ||
+        half_move > 50) {
+      std::cerr << "Invalid FEN notation format!\n";
+      current_board = Board();
+      half_move_clock = 0;
+      turn_to_move = color::Color::kWhite;
+      unique_pos.insert(zobrist::GetHashKey(current_board));
+      return;
+    }
+    std::stringstream main_fen;
+    main_fen << head << " " << color_char << " " << castling << " "
+             << en_passant;
+    current_board = Board(main_fen.str());
+    unique_pos.insert(zobrist::GetHashKey(current_board));
+    // FEN notation cannot check threefold repetition
+    half_move_clock = half_move;
+    turn_to_move = color::FenToColor(color_char);
   }
 }

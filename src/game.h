@@ -28,6 +28,8 @@ namespace game {
   public:
     Game();
 
+    explicit Game(const std::string &fen_notation);
+
   private:
     unsigned half_move_clock;
     std::set<uint64_t> unique_pos;

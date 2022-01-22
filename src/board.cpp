@@ -39,11 +39,11 @@ std::ostream &operator<<(std::ostream &os, const Board &board) {
   return os;
 }
 
-Board::Board(const std::string &fen_notation) : squares({}),
-                                                assoc_data(kDefault),
-                                                en_passant_target(64) {
+Board::Board(const std::string &main_fen_notation) : squares({}),
+                                                     assoc_data(kDefault),
+                                                     en_passant_target(64) {
   std::stringstream ss;
-  ss << fen_notation;
+  ss << main_fen_notation;
   std::string head, castling, en_passant;
   char color_char;
   if (!(ss >> head >> color_char >> castling >> en_passant)) {
