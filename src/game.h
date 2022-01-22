@@ -8,6 +8,7 @@
 #include "board.h"
 #include "color.h"
 #include <iostream>
+#include <set>
 
 namespace game {
   void HumanVSAILoop(
@@ -22,5 +23,17 @@ namespace game {
   Move AskPlayerMove(const Board &board);
 
   void UserInputHelp();
+
+  class Game {
+  public:
+    Game();
+
+  private:
+    unsigned half_move_clock;
+    std::set<uint64_t> unique_pos;
+    std::set<uint64_t> twofold_repeat_pos;
+    color::Color turn_to_move;
+    Board current_board;
+  };
 }
 #endif //INC_4D_GAME_H

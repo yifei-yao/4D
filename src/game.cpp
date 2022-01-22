@@ -6,6 +6,7 @@
 #include "move_gen.h"
 #include <map>
 #include "search.h"
+#include "zobrist.h"
 
 namespace game {
   void HumanVSAILoop(const std::string &fen_notation) {
@@ -101,5 +102,11 @@ namespace game {
                "<file letter>     ::= 'a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'\n"
                "<rank number>     ::= '1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'\n"
                "<promoted to>     ::= 'q'|'r'|'b'|'n'\n";
+  }
+
+  Game::Game()
+          : current_board(), half_move_clock(0),
+            turn_to_move(color::Color::kWhite) {
+    unique_pos.insert(zobrist::GetHashKey(current_board));
   }
 }

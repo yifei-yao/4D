@@ -4,17 +4,19 @@
 
 
 int main() {
-  while (true) {
-    std::string command;
-    std::cin >> command;
-    if (command == "exit" || command == "quit") {
-      break;
-    }
-    if (command == "play") {
-      game::HumanVSAILoop();
-    }
-    if (command == "uci") {
-      uci::UCIMainLoop();
-    }
-  }
+  game::Game();
+
+//  while (true) {
+//    std::string command;
+//    std::cin >> command;
+//    if (command == "exit" || command == "quit") {
+//      break;
+//    }
+//    if (command == "play") {
+//      game::HumanVSAILoop();
+//    }
+//    if (command == "uci") {
+//      uci::UCIMainLoop();
+//    }
+//  }
 }
