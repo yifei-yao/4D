@@ -11,6 +11,8 @@
 #include <set>
 
 namespace game {
+  class Game;
+
   void HumanVSAILoop(
           const std::string &fen_notation = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
@@ -18,7 +20,7 @@ namespace game {
 
   bool AskPlayAgain();
 
-  bool IsGameEnded(const Board &board, color::Color player_color);
+  bool CheckGameEnded(const Game &game, color::Color player_color);
 
   Move AskPlayerMove(const Board &board);
 
@@ -33,6 +35,12 @@ namespace game {
     enum class GameState {
       kOngoing, kWhiteWon, kBlackWon, kDraw,
     };
+
+    [[nodiscard]] color::Color GetTurnToMove() const;
+
+    const Board &GetCurrentBoard() const;
+
+    void Print(color::Color perspective) const;
 
     void ApplyMove(Move valid_move);
 

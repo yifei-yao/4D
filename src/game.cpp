@@ -12,34 +12,43 @@
 namespace game {
   void HumanVSAILoop(const std::string &fen_notation) {
     do {
+      Game game(fen_notation);
       color::Color player_color = PickStartingColor();
-      Board board(fen_notation);
-      board.Print(player_color);
+      game.Print(player_color);
       do {
-        if (board.GetColor() == player_color) {
-          Move move = AskPlayerMove(board);
-          board = Board(board, move);
+        if (game.GetTurnToMove() == player_color) {
+          Move move = AskPlayerMove(game.GetCurrentBoard());
+          game.ApplyMove(move);
         } else {
-          Move move = search::IDRoot(board, TimeController(4));
+          Move move = search::IDRoot(game.GetCurrentBoard(), TimeController(4));
           std::cout << "AI move: " << move << "\n";
-          board = Board(board, move);
+          game.ApplyMove(move);
         }
-        board.Print(player_color);
-      } while (!IsGameEnded(board, player_color));
+        game.Print(player_color);
+      } while (!CheckGameEnded(game, player_color));
     } while (AskPlayAgain());
   }
 
-  bool IsGameEnded(const Board &board, color::Color player_color) {
-    if (!move_gen::IsHasNoValidMove(board)) {
-      return false;
-    } else {
+  bool CheckGameEnded(const Game &game, color::Color player_color) {
+    if (game.IsEnded()) {
       std::cout << "Game Over\n";
-      if (board.GetColor() == player_color) {
-        std::cout << "You LOST!\n";
+      if (game.GetGameState() == Game::GameState::kDraw) {
+        std::cout << "DRAW!\n";
       } else {
-        std::cout << "You WON!\n";
+        color::Color winner;
+        if (game.GetGameState() == Game::GameState::kWhiteWon) {
+          winner = color::Color::kWhite;
+        } else {
+          winner = color::Color::kBlack;
+        }
+        if (winner == player_color) {
+          std::cout << "You WON!\n";
+        } else {
+          std::cout << "You LOST!\n";
+        }
       }
-      return true;
+    } else {
+      return false;
     }
   }
 
@@ -159,14 +168,14 @@ namespace game {
       throw std::range_error("Attempt to apply illegal move");
     }
 
-    bool is_capture_or_pawn_push = false;
-    if (current_board.GetPieceTypeAt(valid_move.to) != Piece::Type::kNone) {
-      is_capture_or_pawn_push = true;
-    } else if (current_board.GetPieceTypeAt(valid_move.from) ==
-               Piece::Type::kPawn) {
-      is_capture_or_pawn_push = true;
+    bool is_capture_or_pawn_move = false;
+    if (current_board.GetPieceTypeAt(valid_move.to) != Piece::Type::kNone ||
+        current_board.GetPieceTypeAt(valid_move.from) ==
+        Piece::Type::kPawn) {
+      is_capture_or_pawn_move = true;
     }
-    if (is_capture_or_pawn_push) {
+
+    if (is_capture_or_pawn_move) {
       half_move_clock = 0;
     } else {
       ++half_move_clock;
@@ -214,5 +223,17 @@ namespace game {
       state = GameState::kDraw;
       return;
     }
+  }
+
+  void Game::Print(color::Color perspective) const {
+    current_board.Print(perspective);
+  }
+
+  color::Color Game::GetTurnToMove() const {
+    return turn_to_move;
+  }
+
+  const Board &Game::GetCurrentBoard() const {
+    return current_board;
   }
 }
