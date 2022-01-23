@@ -15,6 +15,12 @@ namespace eval {
 
   int Evaluate(const Board &board);
 
+  int ForceCheckMateEval(const Board &board);
+
+  int CalculateKingDanger(Position king_pos);
+
+  int CalculateTwoKingDistance(Position king1, Position king2);
+
   int GetPieceWeight(Piece::Type piece_type);
 
   std::array<std::array<int, 64>, 12> InitMgTable();

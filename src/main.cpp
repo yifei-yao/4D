@@ -13,7 +13,7 @@ int main() {
       break;
     }
     if (command == "play") {
-      game::HumanVSAILoop();
+      game::HumanVSAILoop("8/P7/4k3/1r6/8/8/7K/8 w - - 0 69");
     }
     if (command == "uci") {
       uci::UCIMainLoop();
