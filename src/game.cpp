@@ -4,10 +4,11 @@
 
 #include "game.h"
 #include "move_gen.h"
-#include <map>
-#include <sstream>
 #include "search.h"
 #include "zobrist.h"
+#include <map>
+#include <sstream>
+#include <algorithm>
 
 namespace game {
   void HumanVSAILoop(const std::string &fen_notation) {
@@ -166,10 +167,10 @@ namespace game {
     }
 
     std::vector<Move> all_moves = move_gen::GenerateAllMoves(current_board);
-//    if (std::find(all_moves.begin(), all_moves.end(), valid_move) ==
-//        all_moves.end()) {
-//      throw std::range_error("Attempt to apply illegal move");
-//    }
+    if (std::find(all_moves.begin(), all_moves.end(), valid_move) ==
+        all_moves.end()) {
+      throw std::range_error("Attempt to apply illegal move");
+    }
 
     bool is_capture_or_pawn_move = false;
     if (current_board.GetPieceTypeAt(valid_move.to) != Piece::Type::kNone ||

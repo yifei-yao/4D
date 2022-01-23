@@ -33,7 +33,7 @@ namespace eval {
     int mgScore = mg[side_to_move] - mg[Other(side_to_move)];
     int egScore = eg[side_to_move] - eg[Other(side_to_move)];
     int mgPhase = gamePhase;
-    if (mgPhase > 24) mgPhase = 24; /* in case of early promotion */
+    if (mgPhase > 24) mgPhase = 24;
     int egPhase = 24 - mgPhase;
 
     if (egPhase >= 18) {
@@ -45,9 +45,6 @@ namespace eval {
       int checkmate_score = 10 * ForceCheckMateEval(board);
       int final_score = (regular_score * (7 - checkmate_phase) +
                          checkmate_score * checkmate_phase) / 7;
-//      std::cout << "Force Check Mate Eval: " << "Regular Score: "
-//                << regular_score << "  CheckMate_Score: " << checkmate_score
-//                << " Final Score: " << final_score << "\n";
       return final_score;
     } else {
       return (mgScore * mgPhase + egScore * egPhase) / 24;

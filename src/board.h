@@ -5,13 +5,13 @@
 #ifndef INC_4D_BOARD_H
 #define INC_4D_BOARD_H
 
-#include <array>
-#include <string>
-#include <iostream>
 #include "move.h"
 #include "piece.h"
 #include "color.h"
 #include "position.h"
+#include <array>
+#include <string>
+#include <iostream>
 
 class Board {
   friend std::ostream &operator<<(std::ostream &os, const Board &board);

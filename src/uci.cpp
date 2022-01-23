@@ -3,7 +3,6 @@
 //
 
 #include "uci.h"
-#include "board.h"
 #include "move.h"
 #include "move_gen.h"
 #include "search.h"
@@ -25,7 +24,7 @@ void uci::UCIMainLoop() {
     ss << line;
     std::string first_word;
     ss >> first_word;
-    if (first_word == "exit" || first_word == "quit") {
+    if (first_word == "exit" || first_word == "quit" || first_word == "q") {
       break;
     }
     if (first_word == "isready") {

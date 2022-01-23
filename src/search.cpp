@@ -7,7 +7,6 @@
 #include "move_gen.h"
 #include "infinity.h"
 #include "move_order.h"
-
 #include <list>
 #include <chrono>
 #include <map>

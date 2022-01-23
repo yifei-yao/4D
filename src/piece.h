@@ -5,8 +5,8 @@
 #ifndef INC_4D_PIECE_H
 #define INC_4D_PIECE_H
 
-#include <iostream>
 #include "color.h"
+#include <iostream>
 
 class Piece {
   friend bool operator!=(Piece lhs, Piece rhs);

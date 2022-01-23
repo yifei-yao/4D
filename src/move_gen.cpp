@@ -2,11 +2,11 @@
 // Created by Yifei Yao on 12/24/21.
 //
 
-#include <stdexcept>
-#include <array>
 #include "move_gen.h"
 #include "piece.h"
 #include "position.h"
+#include <stdexcept>
+#include <array>
 
 namespace move_gen {
   std::vector<Move> GenerateAllMoves(const Board &board) {

@@ -1,9 +1,9 @@
 //
 // Created by Yifei Yao on 12/24/21.
 //
+#include "piece.h"
 #include <string>
 #include <iostream>
-#include "piece.h"
 
 Piece::Piece() : type(Type::kNone), color(color::Color::kNone) {}
 

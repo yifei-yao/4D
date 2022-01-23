@@ -2,9 +2,9 @@
 // Created by Yifei Yao on 12/24/21.
 //
 
-#include <exception>
 #include "sstream"
 #include "move.h"
+#include <exception>
 
 Move::Move(Position from, Position to, Move::Flag flag) : from(from.GetIndex()),
                                                           to(to.GetIndex()),

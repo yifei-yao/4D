@@ -5,10 +5,10 @@
 #ifndef INC_4D_MOVE_GEN_H
 #define INC_4D_MOVE_GEN_H
 
-#include <vector>
 #include "move.h"
 #include "board.h"
 #include "position.h"
+#include <vector>
 
 namespace move_gen {
   namespace direction {
