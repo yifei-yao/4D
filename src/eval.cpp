@@ -37,17 +37,14 @@ namespace eval {
     int egPhase = 24 - mgPhase;
 
     if (egPhase >= 18) {
-      int checkmate_phase = 24 - egPhase;
       int regular_score = (mgScore * mgPhase + egScore * egPhase) / 24;
-      int checkmate_score = 10 * ForceCheckMateEval(board);
-      int final_score;
-      if (regular_score > 0) {
-        final_score = regular_score + checkmate_score;
-      } else {
-        final_score = regular_score;
+      if (regular_score <= 0) {
+        return regular_score; // only try force checkmate when winning
       }
-//      int final_score = (regular_score * (6 - checkmate_phase) +
-//                         checkmate_score * checkmate_phase) / 60;
+      int checkmate_phase = egPhase - 17;
+      int checkmate_score = 10 * ForceCheckMateEval(board);
+      int final_score = (regular_score * (7 - checkmate_phase) +
+                         checkmate_score * checkmate_phase) / 7;
       std::cout << "Force Check Mate Eval: " << "Regular Score: "
                 << regular_score << "  CheckMate_Score: " << checkmate_score
                 << " Final Score: " << final_score << "\n";
