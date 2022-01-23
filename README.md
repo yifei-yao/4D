@@ -5,7 +5,7 @@ Play chess in command line or UCI mode.
 
 ## Prerequisites
 * C++17 compiler
-* CMake 3.14+
+* CMake 3.13+
 
 ## Build
 Go to the project directory
