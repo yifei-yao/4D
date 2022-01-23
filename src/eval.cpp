@@ -45,9 +45,9 @@ namespace eval {
       int checkmate_score = 10 * ForceCheckMateEval(board);
       int final_score = (regular_score * (7 - checkmate_phase) +
                          checkmate_score * checkmate_phase) / 7;
-      std::cout << "Force Check Mate Eval: " << "Regular Score: "
-                << regular_score << "  CheckMate_Score: " << checkmate_score
-                << " Final Score: " << final_score << "\n";
+//      std::cout << "Force Check Mate Eval: " << "Regular Score: "
+//                << regular_score << "  CheckMate_Score: " << checkmate_score
+//                << " Final Score: " << final_score << "\n";
       return final_score;
     } else {
       return (mgScore * mgPhase + egScore * egPhase) / 24;
