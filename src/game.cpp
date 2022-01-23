@@ -21,6 +21,7 @@ namespace game {
           game.ApplyMove(move);
         } else {
           Move move = search::IDRoot(game.GetCurrentBoard(), TimeController(4),
+                                     game.GetUniquePos(),
                                      game.GetTwofoldRepeat());
           std::cout << "AI move: " << move << "\n";
           game.ApplyMove(move);
@@ -241,5 +242,9 @@ namespace game {
 
   const std::set<uint64_t> &Game::GetTwofoldRepeat() const {
     return twofold_repeat_pos;
+  }
+
+  const std::set<uint64_t> &Game::GetUniquePos() const {
+    return unique_pos;
   }
 }

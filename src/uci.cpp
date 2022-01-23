@@ -38,7 +38,7 @@ void uci::UCIMainLoop() {
     }
     if (first_word == "go") {
       tc.SetTime(3);
-      Move move = search::IDRoot(board, tc, {});
+      Move move = search::IDRoot(board, tc, {}, {});
       std::cout << "bestmove " << move << std::endl;
       board = Board(board, move);
     }
