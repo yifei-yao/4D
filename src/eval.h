@@ -15,6 +15,8 @@ namespace eval {
 
   int Evaluate(const Board &board);
 
+  double CalculateGameProgress(const Board &board);
+
   int ForceCheckMateEval(const Board &board);
 
   int CalculateKingDanger(Position king_pos);

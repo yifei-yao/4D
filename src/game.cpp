@@ -120,11 +120,12 @@ namespace game {
 
   Game::Game()
           : current_board(), half_move_clock(0),
-            turn_to_move(color::Color::kWhite), state(GameState::kOngoing) {
+            turn_to_move(color::Color::kWhite), state(GameState::kOngoing),
+            move_count(0) {
     unique_pos.insert(zobrist::GetHashKey(current_board));
   }
 
-  Game::Game(const std::string &fen_notation) {
+  Game::Game(const std::string &fen_notation) : move_count(0) {
     std::stringstream ss;
     std::string head, castling, en_passant;
     char color_char;
@@ -161,7 +162,6 @@ namespace game {
 
   void Game::ApplyMove(Move valid_move) {
     // assume valid move; for user input, must be validated beforehand
-
     if (IsEnded()) {
       throw std::logic_error("Cannot make move after game termination");
     }
@@ -170,6 +170,10 @@ namespace game {
     if (std::find(all_moves.begin(), all_moves.end(), valid_move) ==
         all_moves.end()) {
       throw std::range_error("Attempt to apply illegal move");
+    }
+
+    if (GetTurnToMove() == color::Color::kBlack) {
+      ++move_count;
     }
 
     bool is_capture_or_pawn_move = false;
@@ -247,5 +251,9 @@ namespace game {
 
   const std::set<uint64_t> &Game::GetUniquePos() const {
     return unique_pos;
+  }
+
+  unsigned Game::GetMoveCount() const {
+    return move_count;
   }
 }

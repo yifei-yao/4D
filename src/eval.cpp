@@ -152,4 +152,20 @@ namespace eval {
     int vertical_dis = abs(king1.row - king2.row);
     return horizontal_dis + vertical_dis;
   }
+
+  double CalculateGameProgress(const Board &board) {
+    int gamePhase = 0;
+    for (int sq = 0; sq < 64; ++sq) {
+      Piece piece = board.GetPieceAt(sq);
+      if (!piece.IsNone()) {
+        color::Color color = piece.GetColor();
+        int pc = PC(piece);
+        gamePhase += game_phase_inc[pc];
+      }
+    }
+    int mgPhase = gamePhase;
+    if (mgPhase > 24) mgPhase = 24;
+    int egPhase = 24 - mgPhase;
+    return egPhase / 24.0;
+  }
 }

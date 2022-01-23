@@ -44,6 +44,8 @@ namespace game {
 
     void ApplyMove(Move valid_move);
 
+    [[nodiscard]] unsigned GetMoveCount() const;
+
     [[nodiscard]] GameState GetGameState() const;
 
     [[nodiscard]] bool IsEnded() const;
@@ -59,6 +61,7 @@ namespace game {
     color::Color turn_to_move;
     Board current_board;
     GameState state;
+    unsigned move_count;
   };
 }
 #endif //INC_4D_GAME_H
