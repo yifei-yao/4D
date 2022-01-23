@@ -432,7 +432,7 @@ namespace move_gen {
     }
   }
 
-  bool IsCheckMated(const Board &board) {
+  bool IsHasNoValidMove(const Board &board) {
     return GenerateAllMoves(board).empty();
   }
 
@@ -618,5 +618,18 @@ namespace move_gen {
                      king_pos);
       }
     }
+  }
+
+  Position FindKingPos(const Board &board) {
+    Position king_pos = {-1, -1};
+    for (Position pos{0}; pos.IsInRange(); ++pos) {
+      if (board.IsFriendlyAt(pos)) {
+        if (board.GetPieceTypeAt(pos) == Piece::Type::kKing) {
+          king_pos = pos;
+          break;
+        }
+      }
+    }
+    return king_pos;
   }
 }

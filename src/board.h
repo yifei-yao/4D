@@ -21,7 +21,7 @@ public:
 
   void Print(color::Color perspective) const;
 
-  explicit Board(const std::string &fen_notation);
+  explicit Board(const std::string &main_fen_notation);
 
   [[nodiscard]] Piece GetPieceAt(Position pos) const;
 

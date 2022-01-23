@@ -34,7 +34,7 @@ namespace move_gen {
   void GenerateKingCaptureMoves(const Board &board, Position from,
                                 std::vector<Move> &moves);
 
-  bool IsCheckMated(const Board &board);
+  bool IsHasNoValidMove(const Board &board);
 
   bool IsInCheck(const Board &board, Position king_pos);
 
@@ -42,6 +42,8 @@ namespace move_gen {
                     Position king_pos);
 
   std::vector<Move> GenerateAllMoves(const Board &board);
+
+  Position FindKingPos(const Board &board);
 
   void GenerateKingMoves(const Board &board, Position from,
                          std::vector<Move> &moves);
